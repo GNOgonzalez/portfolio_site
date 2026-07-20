@@ -1,0 +1,116 @@
+---
+import { profile } from '../data/profile';
+import { skillGroups } from '../data/skills';
+import { experience } from '../data/experience';
+
+const topSkills = skillGroups.flatMap((g) => g.skills).slice(0, 14);
+---
+
+<section class="blurbs section" id="about" aria-labelledby="about-heading">
+  <div class="container blurbs-grid">
+    <div class="blurb">
+      <h2 class="blurb-label" id="about-heading">About</h2>
+      <p>{profile.blurb}</p>
+      <p class="blurb-meta text-muted">{profile.education} · {profile.languages}</p>
+    </div>
+
+    <div class="blurb" id="skills">
+      <h2 class="blurb-label">Stack</h2>
+      <ul class="tag-list" aria-label="Key skills">
+        {topSkills.map((skill) => (
+          <li><span class="tag">{skill}</span></li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="blurb" id="experience">
+      <h2 class="blurb-label">Background</h2>
+      <ul class="exp-blurbs">
+        {
+          experience.map((entry) => (
+            <li>
+              <strong>{entry.company}</strong>
+              <span class="exp-dates">{entry.dates}</span>
+              <span class="exp-text">{entry.blurb}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .blurbs {
+    padding-block: var(--space-xl);
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .blurbs-grid {
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  @media (min-width: 768px) {
+    .blurbs-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+    }
+  }
+
+  .blurb-label {
+    margin: 0 0 var(--space-sm);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+  }
+
+  .blurb p {
+    margin: 0 0 var(--space-sm);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--color-text-muted);
+  }
+
+  .blurb-meta {
+    margin: 0;
+    font-size: 0.8125rem;
+  }
+
+  .exp-blurbs {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .exp-blurbs li {
+    margin-bottom: var(--space-md);
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+
+  .exp-blurbs li:last-child {
+    margin-bottom: 0;
+  }
+
+  .exp-blurbs strong {
+    display: block;
+    color: var(--color-text);
+    font-size: 0.9375rem;
+  }
+
+  .exp-dates {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color-primary);
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+  }
+
+  .exp-text {
+    color: var(--color-text-muted);
+  }
+</style>

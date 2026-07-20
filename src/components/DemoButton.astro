@@ -1,0 +1,30 @@
+---
+interface Props {
+  href: string;
+  label: string;
+}
+
+const { href, label } = Astro.props;
+---
+
+<a
+  class="btn btn-primary demo-btn"
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  {label}
+  <span class="sr-only"> (opens in new tab)</span>
+  <span aria-hidden="true" class="external-icon">↗</span>
+</a>
+
+<style>
+  .demo-btn {
+    text-decoration: none;
+  }
+
+  .external-icon {
+    font-size: 0.875em;
+    line-height: 1;
+  }
+</style>

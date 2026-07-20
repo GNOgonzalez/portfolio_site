@@ -1,0 +1,83 @@
+---
+const navItems = [
+  { href: '#projects', label: 'Projects' },
+  { href: '#about', label: 'About' },
+  { href: '#contact', label: 'Contact' },
+];
+
+const isHome = Astro.url.pathname === '/';
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href={isHome ? '#top' : '/'}>Gino Gonzalez</a>
+    <nav aria-label="Main">
+      <ul class="nav-list">
+        {
+          navItems.map((item) => (
+            <li>
+              <a href={isHome ? item.href : `/${item.href}`}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--color-accent) 95%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, white 12%, transparent);
+    backdrop-filter: blur(10px);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-lg);
+    padding-block: var(--space-md);
+  }
+
+  .logo {
+    font-weight: 700;
+    color: var(--color-hero-text);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  .logo:hover {
+    color: #fff;
+  }
+
+  .nav-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm) var(--space-lg);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .nav-list a {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--color-hero-muted);
+    text-decoration: none;
+  }
+
+  .nav-list a:hover {
+    color: #fff;
+  }
+
+  @media (max-width: 540px) {
+    .header-inner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

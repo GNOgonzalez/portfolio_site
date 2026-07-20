@@ -1,0 +1,251 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import DemoButton from '../../components/DemoButton.astro';
+import ProjectOverview from '../../components/ProjectOverview.astro';
+import ProjectNav from '../../components/ProjectNav.astro';
+import Footer from '../../components/Footer.astro';
+import { getProject, getSortedProjects, getAdjacentProjects } from '../../data/projects';
+
+export function getStaticPaths() {
+  return getSortedProjects().map((project) => ({
+    params: { slug: project.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const project = getProject(slug!);
+
+if (!project) {
+  throw new Error(`Unknown project slug: ${slug}`);
+}
+
+const { prev, next } = getAdjacentProjects(slug!);
+const orderLabel = String(project.order).padStart(2, '0');
+
+const statusLabels: Record<typeof project.status, string> = {
+  live: 'Live demo',
+  shipped: 'Shipped',
+  'on-hold': 'On hold',
+  'coming-soon': 'Demo coming soon',
+  'in-progress': 'In progress',
+};
+
+const pageTitle = `${project.title} — Gino M. Gonzalez`;
+---
+
+<Layout title={pageTitle} description={project.subtitle}>
+  <Header />
+  <main id="main" class="project-page">
+    <article class="section container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true"> / </span>
+        <a href="/#projects">Projects</a>
+        <span aria-hidden="true"> / </span>
+        <span aria-current="page">{project.title}</span>
+      </nav>
+
+      <header class="project-header">
+        <p class="order-label">Project {orderLabel}</p>
+        <p class="status">{statusLabels[project.status]}</p>
+        <h1>{project.title}</h1>
+        <p class="subtitle">{project.subtitle}</p>
+        <ul class="tag-list stack" aria-label="Tech stack">
+          {project.stack.map((tech) => (
+            <li><span class="tag">{tech}</span></li>
+          ))}
+        </ul>
+        <div class="header-actions">
+          {project.demoUrl ? (
+            <DemoButton href={project.demoUrl} label="Launch demo" />
+          ) : project.demoNote ? (
+            <span class="demo-pending text-muted">{project.demoNote}</span>
+          ) : null}
+          {
+            project.githubUrl && (
+              <a
+                class="btn btn-secondary"
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                GitHub
+                <span class="sr-only"> (opens in new tab)</span>
+              </a>
+            )
+          }
+        </div>
+        {project.githubNote && <p class="github-note text-muted">{project.githubNote}</p>}
+      </header>
+
+      <ProjectOverview project={project} />
+
+      {
+        project.demoCredentials && (
+          <section class="demo-box" aria-labelledby="demo-heading">
+            <h2 id="demo-heading">Demo credentials</h2>
+            <dl class="credentials">
+              {
+                project.demoCredentials.map((cred) => (
+                  <div class="cred-row">
+                    <dt>{cred.label}</dt>
+                    <dd><code>{cred.value}</code></dd>
+                  </div>
+                ))
+              }
+            </dl>
+            {
+              project.trySteps && (
+                <>
+                  <h3>What to try</h3>
+                  <ol>
+                    {project.trySteps.map((step) => (
+                      <li>{step}</li>
+                    ))}
+                  </ol>
+                </>
+              )
+            }
+          </section>
+        )
+      }
+
+      <ProjectNav prev={prev} next={next} />
+    </article>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .project-page .section {
+    padding-block: var(--space-xl) var(--space-3xl);
+  }
+
+  .breadcrumb {
+    margin-bottom: var(--space-lg);
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+  }
+
+  .breadcrumb a {
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .project-header {
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .order-label {
+    margin: 0 0 var(--space-xs);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primary-bright);
+  }
+
+  .status {
+    margin: 0 0 var(--space-sm);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+  }
+
+  h1 {
+    margin: 0 0 var(--space-sm);
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .subtitle {
+    margin: 0 0 var(--space-md);
+    font-size: 1.0625rem;
+    color: var(--color-primary-dark);
+    font-weight: 500;
+  }
+
+  .stack {
+    margin-bottom: var(--space-lg);
+  }
+
+  .header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .demo-pending {
+    font-size: 0.9375rem;
+  }
+
+  .github-note {
+    margin: var(--space-sm) 0 0;
+    font-size: 0.875rem;
+  }
+
+  .demo-box {
+    max-width: var(--reading-width);
+    margin-bottom: var(--space-xl);
+    padding: var(--space-lg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .demo-box h2 {
+    margin: 0 0 var(--space-md);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+  }
+
+  .demo-box h3 {
+    margin: var(--space-md) 0 var(--space-sm);
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  .demo-box ol {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+  }
+
+  .credentials {
+    margin: 0;
+  }
+
+  .cred-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-xs) var(--space-md);
+    margin-bottom: var(--space-xs);
+  }
+
+  .cred-row dt {
+    font-weight: 600;
+  }
+
+  .cred-row dd {
+    margin: 0;
+  }
+
+  code {
+    font-size: 0.9em;
+    padding: 0.15em 0.4em;
+    background: color-mix(in srgb, var(--color-primary-light) 25%, white);
+    border-radius: 0.25rem;
+  }
+</style>

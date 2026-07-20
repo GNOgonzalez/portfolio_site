@@ -1,0 +1,157 @@
+---
+import type { Project } from '../data/projects';
+import DemoButton from './DemoButton.astro';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+
+const statusLabels: Record<Project['status'], string> = {
+  live: 'Live demo',
+  shipped: 'Shipped',
+  'on-hold': 'On hold',
+  'coming-soon': 'Coming soon',
+  'in-progress': 'In progress',
+};
+
+const indexLabel = String(project.order).padStart(2, '0');
+---
+
+<article class="project-card card">
+  <div class="accent-bar" aria-hidden="true"></div>
+  <div class="card-body">
+    <div class="card-top">
+      <span class:list={['status', project.status]}>{statusLabels[project.status]}</span>
+      <span class="index-num" aria-hidden="true">{indexLabel}</span>
+    </div>
+    <h3>
+      <a href={`/projects/${project.slug}`}>{project.title}</a>
+    </h3>
+    <p class="subtitle">{project.subtitle}</p>
+    <p class="teaser">{project.whereNow}</p>
+    <ul class="tag-list stack" aria-label="Tech stack">
+      {project.stack.slice(0, 4).map((tech) => (
+        <li><span class="tag">{tech}</span></li>
+      ))}
+      {project.stack.length > 4 && (
+        <li><span class="tag">+{project.stack.length - 4}</span></li>
+      )}
+    </ul>
+    <div class="card-actions">
+      <a class="btn btn-primary" href={`/projects/${project.slug}`}>Read overview</a>
+      {project.demoUrl && (
+        <DemoButton href={project.demoUrl} label="Launch demo" />
+      )}
+    </div>
+  </div>
+</article>
+
+<style>
+  .project-card {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .project-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .project-card:hover {
+      transform: none;
+    }
+  }
+
+  .accent-bar {
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-primary-bright));
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 4px);
+    padding: var(--space-lg);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+  }
+
+  .status {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .status.shipped,
+  .status.live {
+    color: var(--color-primary);
+  }
+
+  .status.in-progress,
+  .status.coming-soon {
+    color: var(--color-primary-bright);
+  }
+
+  .index-num {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    color: color-mix(in srgb, var(--color-primary-light) 50%, white);
+    letter-spacing: -0.04em;
+  }
+
+  h3 {
+    margin: 0 0 var(--space-sm);
+    font-size: 1.25rem;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
+  h3 a {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  h3 a:hover {
+    color: var(--color-primary);
+  }
+
+  .subtitle {
+    margin: 0 0 var(--space-sm);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--color-primary-dark);
+  }
+
+  .teaser {
+    flex: 1;
+    margin: 0 0 var(--space-md);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+  }
+
+  .stack {
+    margin-bottom: var(--space-lg);
+  }
+
+  .card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-top: auto;
+  }
+</style>

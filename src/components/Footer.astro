@@ -1,0 +1,90 @@
+---
+import { profile } from '../data/profile';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer" id="contact">
+  <div class="container footer-inner">
+    <div class="footer-main">
+      <h2>Let's build something</h2>
+      <p class="footer-intro">
+        Open to EdTech roles and projects for teachers, students, and language schools.
+      </p>
+      <div class="contact-actions">
+        <a class="btn btn-primary" href={`mailto:${profile.email}`}>Email me</a>
+        <a class="btn btn-secondary" href={`tel:${profile.phone.replace(/\D/g, '')}`}>{profile.phone}</a>
+      </div>
+      <p class="footer-meta text-muted">{profile.location}</p>
+    </div>
+    <p class="copyright">© {year} {profile.name}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: var(--space-2xl);
+    background: var(--color-accent);
+    color: var(--color-hero-text);
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  h2 {
+    margin: 0 0 var(--space-sm);
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .footer-intro {
+    max-width: 28rem;
+    margin: 0 0 var(--space-lg);
+    color: var(--color-hero-muted);
+  }
+
+  .contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+  }
+
+  .site-footer .btn-primary {
+    background: var(--color-hero-text);
+    color: var(--color-accent);
+    border-color: var(--color-hero-text);
+  }
+
+  .site-footer .btn-primary:hover {
+    background: #fff;
+    color: var(--color-accent);
+  }
+
+  .site-footer .btn-secondary {
+    color: var(--color-hero-text);
+    border-color: color-mix(in srgb, var(--color-hero-text) 40%, transparent);
+  }
+
+  .site-footer .btn-secondary:hover {
+    background: color-mix(in srgb, white 10%, transparent);
+    color: #fff;
+    border-color: var(--color-hero-text);
+  }
+
+  .footer-meta {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--color-hero-muted) !important;
+  }
+
+  .copyright {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--color-hero-muted);
+  }
+</style>

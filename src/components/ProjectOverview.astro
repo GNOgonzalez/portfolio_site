@@ -1,0 +1,98 @@
+---
+import type { Project } from '../data/projects';
+import ScreenshotGallery from './ScreenshotGallery.astro';
+import ArchitectureDiagram from './ArchitectureDiagram.astro';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+---
+
+<div class="overview">
+  <section class="overview-section" aria-labelledby="problem-heading">
+    <h2 id="problem-heading">Problem</h2>
+    <p>{project.problem}</p>
+  </section>
+
+  <section class="overview-section" aria-labelledby="solution-heading">
+    <h2 id="solution-heading">Solution</h2>
+    <p>{project.solution}</p>
+  </section>
+
+  <section class="overview-section" aria-labelledby="story-heading">
+    <h2 id="story-heading">Build story</h2>
+    <ul>
+      {project.buildStory.map((beat) => (
+        <li>{beat}</li>
+      ))}
+    </ul>
+  </section>
+
+  {
+    project.screenshots.length > 0 && (
+      <section class="overview-section" aria-labelledby="screenshots-heading">
+        <h2 id="screenshots-heading">Screenshots</h2>
+        <ScreenshotGallery screenshots={project.screenshots} />
+      </section>
+    )
+  }
+
+  {project.hasArchitectureDiagram && <ArchitectureDiagram />}
+
+  <section class="overview-section where-now" aria-labelledby="where-heading">
+    <h2 id="where-heading">Where it is now</h2>
+    <p>{project.whereNow}</p>
+  </section>
+</div>
+
+<style>
+  .overview-section {
+    margin-bottom: var(--space-xl);
+    max-width: var(--reading-width);
+  }
+
+  .overview-section h2 {
+    margin: 0 0 var(--space-sm);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+  }
+
+  .overview-section p {
+    margin: 0;
+    line-height: 1.65;
+    color: var(--color-text-muted);
+  }
+
+  .overview-section ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: var(--color-text-muted);
+  }
+
+  .overview-section li {
+    margin-bottom: var(--space-xs);
+    line-height: 1.55;
+  }
+
+  .overview-section li:last-child {
+    margin-bottom: 0;
+  }
+
+  .where-now {
+    padding: var(--space-lg);
+    background: color-mix(in srgb, var(--color-primary-light) 15%, white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    max-width: none;
+  }
+
+  .where-now p {
+    color: var(--color-text);
+    font-weight: 500;
+  }
+</style>

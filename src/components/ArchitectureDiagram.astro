@@ -1,0 +1,142 @@
+<section class="architecture" id="architecture" aria-labelledby="architecture-heading">
+  <h2 id="architecture-heading">SimplyBook → Sheets pipeline</h2>
+  <p class="architecture-caption">
+    AppSheet triggers <code>scheduleWeeklyBookings</code> in Google Apps Script, which reads
+    client/teacher data from Google Sheets, calls SimplyBook.me via JSON-RPC, and writes bookings
+    back atomically. Cleaned data with custom IDs feeds AppSheet for daily ops and Google Data Studio
+    for monthly progress reports.
+  </p>
+
+  <div class="diagram card" role="img" aria-label="Architecture flow from AppSheet through Google Apps Script and Sheets to SimplyBook API">
+    <div class="layer">
+      <h3>User Interface (AppSheet)</h3>
+      <ol class="flow-nodes">
+        <li>AppSheet UI (mobile/web)</li>
+        <li>Automation bot / action button</li>
+      </ol>
+    </div>
+
+    <p class="flow-arrow" aria-hidden="true">↓ Trigger sync</p>
+
+    <div class="layer">
+      <h3>Execution core (Google Apps Script)</h3>
+      <ol class="flow-nodes">
+        <li><code>scheduleWeeklyBookings</code></li>
+        <li>In-memory lookup maps (teacher &amp; client email)</li>
+        <li>Idempotent filter (hashed existing set)</li>
+        <li>14-day date processing loop</li>
+        <li>Data validator (case-insensitive / partial blanks)</li>
+        <li>UI notification aggregator (<code>ss.toast</code>)</li>
+      </ol>
+    </div>
+
+    <div class="layer-row">
+      <div class="layer">
+        <h3>Data store (Google Sheets)</h3>
+        <ul class="flow-nodes plain">
+          <li>Client records</li>
+          <li>Booking records</li>
+          <li>Teacher directory</li>
+          <li>API reference list</li>
+        </ul>
+      </div>
+
+      <div class="layer">
+        <h3>External provider (SimplyBook.me)</h3>
+        <ul class="flow-nodes plain">
+          <li>JSON-RPC 2.0 endpoint</li>
+          <li><code>getToken</code> method</li>
+          <li><code>book</code> method</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="flow-note">
+      Auth handshake → remote booking payload → atomic batch write to bookings sheet → success/error toasts in AppSheet.
+    </p>
+  </div>
+</section>
+
+<style>
+  .architecture {
+    margin-top: var(--space-2xl);
+  }
+
+  h2 {
+    margin: 0 0 var(--space-md);
+    font-size: 1.375rem;
+    font-weight: 600;
+  }
+
+  .architecture-caption {
+    max-width: var(--reading-width);
+    margin: 0 0 var(--space-lg);
+    color: var(--color-text-muted);
+  }
+
+  code {
+    font-size: 0.9em;
+    padding: 0.1em 0.35em;
+    background: color-mix(in srgb, var(--color-primary-light) 25%, white);
+    border-radius: 0.25rem;
+  }
+
+  .diagram {
+    padding: var(--space-lg);
+  }
+
+  .layer {
+    margin-bottom: var(--space-md);
+    padding: var(--space-md);
+    background: color-mix(in srgb, var(--color-primary-light) 12%, white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+
+  .layer h3 {
+    margin: 0 0 var(--space-sm);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .layer-row {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  @media (min-width: 640px) {
+    .layer-row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .flow-nodes {
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: 0.9375rem;
+  }
+
+  .flow-nodes.plain {
+    list-style: disc;
+  }
+
+  .flow-nodes li {
+    margin-bottom: 0.25rem;
+  }
+
+  .flow-arrow {
+    margin: var(--space-sm) 0;
+    text-align: center;
+    color: var(--color-primary-dark);
+    font-weight: 600;
+  }
+
+  .flow-note {
+    margin: var(--space-md) 0 0;
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+  }
+</style>

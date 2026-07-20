@@ -1,0 +1,27 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Page not found — Gino M. Gonzalez">
+  <main id="main" class="container not-found">
+    <h1>Page not found</h1>
+    <p>The page you are looking for does not exist.</p>
+    <a class="btn btn-primary" href="/">Back to home</a>
+  </main>
+</Layout>
+
+<style>
+  .not-found {
+    padding-block: var(--space-3xl);
+    max-width: var(--reading-width);
+  }
+
+  h1 {
+    margin: 0 0 var(--space-md);
+  }
+
+  p {
+    margin: 0 0 var(--space-lg);
+    color: var(--color-text-muted);
+  }
+</style>

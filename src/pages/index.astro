@@ -1,0 +1,61 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import AboutBlurbs from '../components/AboutBlurbs.astro';
+import Footer from '../components/Footer.astro';
+import { getSortedProjects } from '../data/projects';
+
+const projects = getSortedProjects();
+---
+
+<Layout>
+  <Header />
+  <main id="main">
+    <Hero />
+
+    <section class="section projects-section" id="projects" aria-labelledby="projects-heading">
+      <div class="container">
+        <h2 class="section-heading-lg" id="projects-heading">Project story</h2>
+        <p class="projects-lead">
+          Four projects in order — each one led to the next. Click through for the overview.
+        </p>
+
+        <div class="projects-grid">
+          {projects.map((project) => (
+            <ProjectCard project={project} />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <AboutBlurbs />
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .projects-section {
+    padding-block: var(--space-2xl) var(--space-xl);
+    margin-top: calc(var(--space-lg) * -1);
+  }
+
+  .projects-lead {
+    max-width: 36rem;
+    margin: calc(var(--space-md) * -1) 0 var(--space-xl);
+    font-size: 1.0625rem;
+    color: var(--color-text-muted);
+  }
+
+  .projects-grid {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  @media (min-width: 640px) {
+    .projects-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

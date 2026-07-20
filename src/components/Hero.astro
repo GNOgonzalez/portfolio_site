@@ -1,0 +1,108 @@
+---
+import { profile } from '../data/profile';
+
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+---
+
+<section class:list={['hero', { compact }]} id="top" aria-labelledby="hero-heading">
+  <div class="container hero-inner">
+    {!compact && <p class="eyebrow">{profile.title}</p>}
+    <h1 id="hero-heading">{compact ? profile.name : 'Projects & demos'}</h1>
+    {!compact && (
+      <>
+        <p class="tagline">{profile.tagline}</p>
+        <p class="name-line">{profile.name}</p>
+      </>
+    )}
+    {!compact && (
+      <a class="btn btn-hero" href="#projects">
+        Jump to projects
+        <span aria-hidden="true">↓</span>
+      </a>
+    )}
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: var(--space-2xl) var(--space-xl);
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-primary) 55%, var(--color-primary-bright) 100%);
+    color: var(--color-hero-text);
+  }
+
+  .hero.compact {
+    padding-block: var(--space-lg);
+    background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
+  }
+
+  .hero-inner {
+    max-width: var(--max-width);
+  }
+
+  .eyebrow {
+    margin: 0 0 var(--space-sm);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-hero-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0 0 var(--space-sm);
+    font-size: clamp(2.25rem, 6vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+  }
+
+  .hero.compact h1 {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 700;
+  }
+
+  .tagline {
+    margin: 0 0 var(--space-xs);
+    font-size: clamp(1.0625rem, 2.5vw, 1.25rem);
+    line-height: 1.5;
+    color: var(--color-hero-muted);
+    max-width: 36rem;
+  }
+
+  .name-line {
+    margin: 0 0 var(--space-lg);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: color-mix(in srgb, var(--color-hero-text) 85%, white);
+  }
+
+  .btn-hero {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 0.7em 1.25em;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: none;
+    background: var(--color-hero-text);
+    border-radius: var(--radius);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .btn-hero:hover {
+    color: var(--color-accent);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn-hero:hover {
+      transform: none;
+    }
+  }
+</style>
