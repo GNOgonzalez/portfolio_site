@@ -1,142 +1,125 @@
-<section class="architecture" id="architecture" aria-labelledby="architecture-heading">
-  <h2 id="architecture-heading">SimplyBook → Sheets pipeline</h2>
-  <p class="architecture-caption">
-    AppSheet triggers <code>scheduleWeeklyBookings</code> in Google Apps Script, which reads
-    client/teacher data from Google Sheets, calls SimplyBook.me via JSON-RPC, and writes bookings
-    back atomically. Cleaned data with custom IDs feeds AppSheet for daily ops and Google Data Studio
-    for monthly progress reports.
-  </p>
+---
+import type { ProjectArchitecture } from '../data/architecture';
 
-  <div class="diagram card" role="img" aria-label="Architecture flow from AppSheet through Google Apps Script and Sheets to SimplyBook API">
-    <div class="layer">
-      <h3>User Interface (AppSheet)</h3>
-      <ol class="flow-nodes">
-        <li>AppSheet UI (mobile/web)</li>
-        <li>Automation bot / action button</li>
-      </ol>
+interface Props {
+  architecture: ProjectArchitecture;
+  id: string;
+}
+
+const { architecture, id } = Astro.props;
+const dataId = `architecture-data-${id}`;
+const hostId = `architecture-host-${id}`;
+---
+
+<section class="architecture" id="architecture" aria-labelledby={`architecture-heading-${id}`}>
+  <h2 id={`architecture-heading-${id}`}>{architecture.title}</h2>
+  <p class="architecture-caption">{architecture.caption}</p>
+
+  <figure class="diagram card" aria-labelledby={`architecture-heading-${id}`}>
+    <div id={hostId} class="diagram-host" data-diagram-id={id}>
+      <p class="diagram-loading">Loading diagram…</p>
     </div>
-
-    <p class="flow-arrow" aria-hidden="true">↓ Trigger sync</p>
-
-    <div class="layer">
-      <h3>Execution core (Google Apps Script)</h3>
-      <ol class="flow-nodes">
-        <li><code>scheduleWeeklyBookings</code></li>
-        <li>In-memory lookup maps (teacher &amp; client email)</li>
-        <li>Idempotent filter (hashed existing set)</li>
-        <li>14-day date processing loop</li>
-        <li>Data validator (case-insensitive / partial blanks)</li>
-        <li>UI notification aggregator (<code>ss.toast</code>)</li>
-      </ol>
-    </div>
-
-    <div class="layer-row">
-      <div class="layer">
-        <h3>Data store (Google Sheets)</h3>
-        <ul class="flow-nodes plain">
-          <li>Client records</li>
-          <li>Booking records</li>
-          <li>Teacher directory</li>
-          <li>API reference list</li>
-        </ul>
-      </div>
-
-      <div class="layer">
-        <h3>External provider (SimplyBook.me)</h3>
-        <ul class="flow-nodes plain">
-          <li>JSON-RPC 2.0 endpoint</li>
-          <li><code>getToken</code> method</li>
-          <li><code>book</code> method</li>
-        </ul>
-      </div>
-    </div>
-
-    <p class="flow-note">
-      Auth handshake → remote booking payload → atomic batch write to bookings sheet → success/error toasts in AppSheet.
-    </p>
-  </div>
+    <script type="application/json" id={dataId} set:html={JSON.stringify(architecture.diagram)} />
+  </figure>
 </section>
+
+<script>
+  import mermaid from 'mermaid';
+
+  const themeVariables = {
+    fontFamily: 'Inter, Segoe UI, system-ui, sans-serif',
+    fontSize: '14px',
+    primaryColor: '#eef3f6',
+    primaryBorderColor: '#3d6a85',
+    primaryTextColor: '#0f1c24',
+    secondaryColor: '#d9e8f0',
+    secondaryBorderColor: '#3d6a85',
+    secondaryTextColor: '#0f1c24',
+    tertiaryColor: '#ffffff',
+    tertiaryBorderColor: '#7eb3cf',
+    tertiaryTextColor: '#0f1c24',
+    lineColor: '#3d6a85',
+    textColor: '#0f1c24',
+    mainBkg: '#eef3f6',
+    nodeBorder: '#3d6a85',
+    clusterBkg: '#f8fbfd',
+    clusterBorder: '#c5d4de',
+    titleColor: '#254656',
+    edgeLabelBackground: '#ffffff',
+  };
+
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'base',
+    securityLevel: 'strict',
+    themeVariables,
+  });
+
+  const hosts = document.querySelectorAll<HTMLElement>('.diagram-host');
+
+  for (const host of hosts) {
+    const diagramId = host.dataset.diagramId;
+    if (!diagramId) continue;
+
+    const dataEl = document.getElementById(`architecture-data-${diagramId}`);
+    const diagram = dataEl?.textContent;
+    if (!diagram) continue;
+
+    try {
+      const { svg } = await mermaid.render(`architecture-${diagramId}`, diagram);
+      host.innerHTML = svg;
+      host.setAttribute('role', 'img');
+    } catch {
+      host.innerHTML = '<p class="diagram-error">Could not render architecture diagram.</p>';
+    }
+  }
+</script>
 
 <style>
   .architecture {
-    margin-top: var(--space-2xl);
+    margin-top: var(--space-xl);
+    max-width: none;
   }
 
   h2 {
     margin: 0 0 var(--space-md);
-    font-size: 1.375rem;
-    font-weight: 600;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primary);
   }
 
   .architecture-caption {
     max-width: var(--reading-width);
     margin: 0 0 var(--space-lg);
+    line-height: 1.65;
     color: var(--color-text-muted);
-  }
-
-  code {
-    font-size: 0.9em;
-    padding: 0.1em 0.35em;
-    background: color-mix(in srgb, var(--color-primary-light) 25%, white);
-    border-radius: 0.25rem;
   }
 
   .diagram {
-    padding: var(--space-lg);
-  }
-
-  .layer {
-    margin-bottom: var(--space-md);
-    padding: var(--space-md);
-    background: color-mix(in srgb, var(--color-primary-light) 12%, white);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-  }
-
-  .layer h3 {
-    margin: 0 0 var(--space-sm);
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--color-primary-dark);
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-  }
-
-  .layer-row {
-    display: grid;
-    gap: var(--space-md);
-  }
-
-  @media (min-width: 640px) {
-    .layer-row {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
-  .flow-nodes {
     margin: 0;
-    padding-left: 1.25rem;
-    font-size: 0.9375rem;
+    padding: var(--space-lg);
+    overflow-x: auto;
   }
 
-  .flow-nodes.plain {
-    list-style: disc;
+  .diagram-host {
+    min-height: 12rem;
   }
 
-  .flow-nodes li {
-    margin-bottom: 0.25rem;
-  }
-
-  .flow-arrow {
-    margin: var(--space-sm) 0;
+  .diagram-loading,
+  .diagram-error {
+    margin: 0;
     text-align: center;
-    color: var(--color-primary-dark);
-    font-weight: 600;
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
   }
 
-  .flow-note {
-    margin: var(--space-md) 0 0;
-    font-size: 0.9375rem;
-    color: var(--color-text-muted);
+  .diagram-host :global(svg) {
+    display: block;
+    width: 100%;
+    min-width: 20rem;
+    height: auto;
+    margin-inline: auto;
   }
 </style>

@@ -1,4 +1,6 @@
 import { demoUrls } from './demo';
+import type { ProjectArchitecture } from './architecture';
+import { projectArchitectures } from './architecture';
 
 export type ProjectStatus =
   | 'live'
@@ -6,12 +8,6 @@ export type ProjectStatus =
   | 'on-hold'
   | 'coming-soon'
   | 'in-progress';
-
-export type ProjectScreenshot = {
-  src: string;
-  alt: string;
-  caption?: string;
-};
 
 export type Project = {
   slug: string;
@@ -24,8 +20,7 @@ export type Project = {
   solution: string;
   buildStory: string[];
   whereNow: string;
-  screenshots: ProjectScreenshot[];
-  hasArchitectureDiagram?: boolean;
+  architecture: ProjectArchitecture;
   demoUrl?: string;
   demoNote?: string;
   demoCredentials?: { label: string; value: string }[];
@@ -61,19 +56,7 @@ export const projects: Project[] = [
     ],
     whereNow:
       'Pipeline in production at Reflet — staff use AppSheet daily and Data Studio for monthly reports. Booking UX eventually needed more than Sheets could offer → led to Project 2.',
-    screenshots: [
-      {
-        src: '/screenshots/reflet-ops/placeholder-architecture.svg',
-        alt: 'Placeholder for SimplyBook to Sheets pipeline architecture',
-        caption: 'SimplyBook → GAS → Sheets → AppSheet — diagram below',
-      },
-      {
-        src: '/screenshots/reflet-ops/placeholder-portal.svg',
-        alt: 'Placeholder for AppSheet or Data Studio view',
-        caption: 'AppSheet / Data Studio views — screenshot coming soon',
-      },
-    ],
-    hasArchitectureDiagram: true,
+    architecture: projectArchitectures['reflet-ops'],
   },
   {
     slug: 'reflet-booking',
@@ -92,13 +75,7 @@ export const projects: Project[] = [
     ],
     whereNow:
       'On hold — not in production. The experience let me start a separate passion project: a booking scheduling app (Project 3).',
-    screenshots: [
-      {
-        src: '/screenshots/reflet-booking/placeholder-prototype.svg',
-        alt: 'Placeholder for Reflet booking prototype',
-        caption: 'Booking prototype UI — screenshot coming soon',
-      },
-    ],
+    architecture: projectArchitectures['reflet-booking'],
   },
   {
     slug: 'booking-scheduling',
@@ -119,18 +96,7 @@ export const projects: Project[] = [
     ],
     whereNow:
       'Production-ready passion project with a public demo. The flagship app I keep building because I have seen firsthand how much language schools need tools like this.',
-    screenshots: [
-      {
-        src: '/screenshots/booking-scheduling/placeholder-student.svg',
-        alt: 'Placeholder for student booking view',
-        caption: 'Student session booking — screenshot coming soon',
-      },
-      {
-        src: '/screenshots/booking-scheduling/placeholder-teacher.svg',
-        alt: 'Placeholder for teacher availability calendar',
-        caption: 'Teacher availability calendar — screenshot coming soon',
-      },
-    ],
+    architecture: projectArchitectures['booking-scheduling'],
     demoUrl: demoUrls.booking || undefined,
     demoNote: demoUrls.booking
       ? 'First load may take ~50s on free-tier hosting while the API wakes up.'
@@ -165,13 +131,7 @@ export const projects: Project[] = [
       'Week 2 CLI in progress; web demo ready to deploy. Personal project for focus, fundamentals, and honest skill-building.',
     demoUrl: demoUrls.pomodoro || undefined,
     demoNote: demoUrls.pomodoro ? undefined : 'Web demo ready — deploy todo_pomodoro/web to Vercel.',
-    screenshots: [
-      {
-        src: '/screenshots/pomodoro-game/placeholder-cli.svg',
-        alt: 'Placeholder for Pomodoro CLI',
-        caption: 'CLI Pomodoro — screenshot coming soon',
-      },
-    ],
+    architecture: projectArchitectures['pomodoro-game'],
   },
 ];
 

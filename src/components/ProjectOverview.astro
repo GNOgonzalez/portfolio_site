@@ -1,6 +1,5 @@
 ---
 import type { Project } from '../data/projects';
-import ScreenshotGallery from './ScreenshotGallery.astro';
 import ArchitectureDiagram from './ArchitectureDiagram.astro';
 
 interface Props {
@@ -30,16 +29,7 @@ const { project } = Astro.props;
     </ul>
   </section>
 
-  {
-    project.screenshots.length > 0 && (
-      <section class="overview-section" aria-labelledby="screenshots-heading">
-        <h2 id="screenshots-heading">Screenshots</h2>
-        <ScreenshotGallery screenshots={project.screenshots} />
-      </section>
-    )
-  }
-
-  {project.hasArchitectureDiagram && <ArchitectureDiagram />}
+  <ArchitectureDiagram architecture={project.architecture} id={project.slug} />
 
   <section class="overview-section where-now" aria-labelledby="where-heading">
     <h2 id="where-heading">Where it is now</h2>
