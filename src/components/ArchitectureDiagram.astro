@@ -16,10 +16,10 @@ const hostId = `architecture-host-${id}`;
   <p class="architecture-caption">{architecture.caption}</p>
 
   <figure class="diagram card" aria-labelledby={`architecture-heading-${id}`}>
+    <template id={dataId}>{architecture.diagram}</template>
     <div id={hostId} class="diagram-host" data-diagram-id={id}>
       <p class="diagram-loading">Loading diagram…</p>
     </div>
-    <script type="application/json" id={dataId} set:html={JSON.stringify(architecture.diagram)} />
   </figure>
 </section>
 
@@ -55,24 +55,33 @@ const hostId = `architecture-host-${id}`;
     themeVariables,
   });
 
-  const hosts = document.querySelectorAll<HTMLElement>('.diagram-host');
+  async function renderDiagrams() {
+    const hosts = document.querySelectorAll<HTMLElement>('.diagram-host');
 
-  for (const host of hosts) {
-    const diagramId = host.dataset.diagramId;
-    if (!diagramId) continue;
+    for (const host of hosts) {
+      const diagramId = host.dataset.diagramId;
+      if (!diagramId || host.dataset.rendered === 'true') continue;
 
-    const dataEl = document.getElementById(`architecture-data-${diagramId}`);
-    const diagram = dataEl?.textContent;
-    if (!diagram) continue;
+      const template = document.getElementById(`architecture-data-${diagramId}`);
+      const diagram =
+        template instanceof HTMLTemplateElement
+          ? template.content.textContent?.trim()
+          : undefined;
 
-    try {
-      const { svg } = await mermaid.render(`architecture-${diagramId}`, diagram);
-      host.innerHTML = svg;
-      host.setAttribute('role', 'img');
-    } catch {
-      host.innerHTML = '<p class="diagram-error">Could not render architecture diagram.</p>';
+      if (!diagram) continue;
+
+      try {
+        const { svg } = await mermaid.render(`architecture-${diagramId}`, diagram);
+        host.innerHTML = svg;
+        host.setAttribute('role', 'img');
+        host.dataset.rendered = 'true';
+      } catch {
+        host.innerHTML = '<p class="diagram-error">Could not render architecture diagram.</p>';
+      }
     }
   }
+
+  renderDiagrams();
 </script>
 
 <style>
