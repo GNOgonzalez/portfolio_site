@@ -82,7 +82,7 @@ export const projects: Project[] = [
     order: 3,
     title: 'Booking & Scheduling App',
     subtitle: 'Passion project — a booking system language schools actually need',
-    status: demoUrls.booking ? 'live' : 'coming-soon',
+    status: 'live',
     stack: ['Python', 'Django', 'DRF', 'React', 'PostgreSQL', 'JWT', 'Docker'],
     problem:
       'Across several language schools I have worked at, scheduling was always painful — teachers juggling availability in spreadsheets, students unsure what their learning options were, staff piecing together membership and class info by hand. I wanted to build the system these schools deserved.',
@@ -97,21 +97,9 @@ export const projects: Project[] = [
     whereNow:
       'Production-ready passion project with a public demo. The flagship app I keep building because I have seen firsthand how much language schools need tools like this.',
     architecture: projectArchitectures['booking-scheduling'],
-    demoUrl: demoUrls.booking || undefined,
-    demoNote: demoUrls.booking
-      ? 'First load may take ~50s on free-tier hosting while the API wakes up.'
-      : 'Live demo deploying soon. First load may take ~50s on free-tier hosting.',
-    demoCredentials: [
-      { label: 'Student', value: 'demo_student / demo1234' },
-      { label: 'Teacher', value: 'demo_teacher / demo1234' },
-      { label: 'Staff', value: 'demo_staff / demo1234' },
-    ],
+    demoUrl: demoUrls.booking,
+    demoNote: 'First load may take ~50s on free-tier hosting while the API wakes up.',
     githubUrl: 'https://github.com/GNOgonzalez/booking_system',
-    trySteps: [
-      'Log in as demo_student and browse open sessions.',
-      'Book a session from the student calendar.',
-      'Switch to demo_teacher to view availability.',
-    ],
   },
   {
     slug: 'pomodoro-game',

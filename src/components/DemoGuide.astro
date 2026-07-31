@@ -1,0 +1,409 @@
+---
+import { inquiryMailto, type DemoGuide } from '../data/demo-guides';
+import { profile } from '../data/profile';
+
+interface Props {
+  guide: DemoGuide;
+  demoUrl?: string;
+}
+
+const { guide, demoUrl } = Astro.props;
+const inquiryHref = guide.inquiry ? inquiryMailto(guide.inquiry, profile.email) : undefined;
+---
+
+<section class="demo-guide" aria-labelledby="demo-guide-heading">
+  <h2 id="demo-guide-heading">Try the live demo</h2>
+
+  {
+    guide.inquiry && inquiryHref && (
+      <aside class="demo-inquiry card" aria-labelledby="demo-inquiry-heading">
+        <h3 id="demo-inquiry-heading">{guide.inquiry.title}</h3>
+        <p>{guide.inquiry.description}</p>
+        <ul>
+          {guide.inquiry.highlights.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+        <a class="btn btn-primary" href={inquiryHref}>
+          Email me about this app
+        </a>
+      </aside>
+    )
+  }
+
+  {demoUrl && (
+    <p class="demo-guide-lead">
+      <a href={demoUrl} target="_blank" rel="noopener noreferrer">
+        Open the demo
+        <span class="sr-only"> (opens in new tab)</span>
+      </a>
+      {' '}— {guide.intro}
+    </p>
+  )}
+  {!demoUrl && <p class="demo-guide-lead">{guide.intro}</p>}
+
+  <div class="demo-notes card" role="note" aria-label="Demo environment notes">
+    <h3>Before you start</h3>
+    <dl class="notes-list">
+      {guide.notes.map((note) => (
+        <div class="note-row">
+          <dt>{note.label}</dt>
+          <dd>{note.detail}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+
+  <div class="demo-logins">
+    <h3>Demo logins</h3>
+    <p class="demo-password">
+      All accounts use password <code>{guide.password}</code>.
+      {guide.registrationNote && ` ${guide.registrationNote}`}
+    </p>
+    <div class="login-table-wrap">
+      <table class="login-table">
+        <thead>
+          <tr>
+            <th scope="col">Role</th>
+            <th scope="col">Username</th>
+            <th scope="col">Best for</th>
+          </tr>
+        </thead>
+        <tbody>
+          {guide.logins.map((login) => (
+            <tr>
+              <th scope="row">{login.role}</th>
+              <td><code>{login.username}</code></td>
+              <td>{login.summary}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="demo-roles">
+    <h3>What each role does</h3>
+    {guide.roles.map((role) => (
+      <details class="role-card card">
+        <summary>{role.title}</summary>
+        <div class="role-body">
+          <p>{role.intro}</p>
+          <ul>
+            {role.features.map((feature) => (
+              <li>
+                <strong>{feature.page}</strong> — {feature.description}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </details>
+    ))}
+  </div>
+
+  <div class="demo-walkthrough">
+    <h3>Recommended walkthrough (~10 minutes)</h3>
+    <ol class="walkthrough-list">
+      {guide.walkthrough.map((section) => (
+        <li>
+          <strong>{section.title}</strong>
+          <ol>
+            {section.steps.map((step) => (
+              <li>{step}</li>
+            ))}
+          </ol>
+          {section.note && <p class="walkthrough-note">{section.note}</p>}
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  <details class="demo-extra card">
+    <summary>Key concepts &amp; troubleshooting</summary>
+    <div class="extra-body">
+      <h4>Key concepts</h4>
+      <dl class="concepts-list">
+        {guide.concepts.map((concept) => (
+          <div class="concept-row">
+            <dt>{concept.term}</dt>
+            <dd>{concept.meaning}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <h4>Troubleshooting</h4>
+      <dl class="trouble-list">
+        {guide.troubleshooting.map((item) => (
+          <div class="trouble-row">
+            <dt>{item.problem}</dt>
+            <dd>{item.fix}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </details>
+</section>
+
+<style>
+  .demo-guide {
+    margin-bottom: var(--space-xl);
+  }
+
+  h2 {
+    margin: 0 0 var(--space-md);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+  }
+
+  h3 {
+    margin: 0 0 var(--space-sm);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  h4 {
+    margin: var(--space-md) 0 var(--space-sm);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+  }
+
+  .demo-guide-lead {
+    max-width: var(--reading-width);
+    margin: 0 0 var(--space-lg);
+    line-height: 1.65;
+    color: var(--color-text-muted);
+  }
+
+  .demo-guide-lead a {
+    font-weight: 600;
+  }
+
+  .demo-notes,
+  .role-card,
+  .demo-extra,
+  .demo-inquiry {
+    margin-bottom: var(--space-md);
+    padding: var(--space-lg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .demo-inquiry {
+    background: color-mix(in srgb, var(--color-primary-light) 18%, white);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, white);
+  }
+
+  .demo-inquiry h3 {
+    margin: 0 0 var(--space-sm);
+    font-size: 1.0625rem;
+    color: var(--color-primary-dark);
+  }
+
+  .demo-inquiry p {
+    margin: 0 0 var(--space-md);
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .demo-inquiry ul {
+    margin: 0 0 var(--space-md);
+    padding-left: 1.25rem;
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+  }
+
+  .demo-inquiry li {
+    margin-bottom: var(--space-xs);
+    line-height: 1.5;
+  }
+
+  .demo-inquiry .btn {
+    text-decoration: none;
+  }
+
+  .notes-list,
+  .concepts-list,
+  .trouble-list {
+    margin: 0;
+  }
+
+  .note-row,
+  .concept-row,
+  .trouble-row {
+    display: grid;
+    gap: 0.15rem var(--space-md);
+    margin-bottom: var(--space-sm);
+  }
+
+  @media (min-width: 540px) {
+    .note-row,
+    .concept-row,
+    .trouble-row {
+      grid-template-columns: 8rem 1fr;
+    }
+  }
+
+  .note-row dt,
+  .concept-row dt,
+  .trouble-row dt {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .note-row dd,
+  .concept-row dd,
+  .trouble-row dd {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .demo-logins,
+  .demo-roles,
+  .demo-walkthrough {
+    margin-bottom: var(--space-lg);
+  }
+
+  .demo-password {
+    margin: 0 0 var(--space-md);
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+  }
+
+  .login-table-wrap {
+    overflow-x: auto;
+  }
+
+  .login-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+
+  .login-table th,
+  .login-table td {
+    padding: var(--space-sm) var(--space-md);
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: top;
+  }
+
+  .login-table thead th {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary-light) 12%, white);
+  }
+
+  .login-table tbody th {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .login-table td {
+    color: var(--color-text-muted);
+  }
+
+  .role-card summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    list-style: none;
+  }
+
+  .role-card summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .role-card summary::before {
+    content: '▸ ';
+    color: var(--color-primary-bright);
+  }
+
+  .role-card[open] summary::before {
+    content: '▾ ';
+  }
+
+  .role-body {
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .role-body p {
+    margin: 0 0 var(--space-sm);
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .role-body ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+  }
+
+  .role-body li {
+    margin-bottom: var(--space-xs);
+    line-height: 1.5;
+  }
+
+  .walkthrough-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+  }
+
+  .walkthrough-list > li {
+    margin-bottom: var(--space-md);
+    line-height: 1.55;
+  }
+
+  .walkthrough-list ol {
+    margin: var(--space-xs) 0 0;
+    padding-left: 1.25rem;
+  }
+
+  .walkthrough-note {
+    margin: var(--space-xs) 0 0;
+    font-size: 0.875rem;
+    font-style: italic;
+    color: var(--color-text-muted);
+  }
+
+  .demo-extra summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    list-style: none;
+  }
+
+  .demo-extra summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .extra-body {
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-border);
+  }
+
+  code {
+    font-size: 0.9em;
+    padding: 0.15em 0.4em;
+    background: color-mix(in srgb, var(--color-primary-light) 25%, white);
+    border-radius: 0.25rem;
+  }
+</style>
