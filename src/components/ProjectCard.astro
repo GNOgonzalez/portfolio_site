@@ -19,11 +19,14 @@ const statusLabels: Record<Project['status'], string> = {
 const indexLabel = String(project.order).padStart(2, '0');
 ---
 
-<article class="project-card card">
+<article class:list={['project-card card', project.featured && 'project-card--featured']}>
   <div class="accent-bar" aria-hidden="true"></div>
   <div class="card-body">
     <div class="card-top">
-      <span class:list={['status', project.status]}>{statusLabels[project.status]}</span>
+      <span class="card-badges">
+        {project.featured && <span class="featured-badge">Flagship</span>}
+        <span class:list={['status', project.status]}>{statusLabels[project.status]}</span>
+      </span>
       <span class="index-num" aria-hidden="true">{indexLabel}</span>
     </div>
     <h3>
@@ -85,6 +88,33 @@ const indexLabel = String(project.order).padStart(2, '0');
     align-items: center;
     justify-content: space-between;
     margin-bottom: var(--space-md);
+  }
+
+  .card-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .featured-badge {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-primary-dark);
+    padding: 0.2em 0.5em;
+    background: color-mix(in srgb, var(--color-primary-light) 35%, white);
+    border-radius: var(--radius);
+  }
+
+  .project-card--featured {
+    border-color: color-mix(in srgb, var(--color-primary) 40%, white);
+    box-shadow: var(--shadow);
+  }
+
+  .project-card--featured .accent-bar {
+    height: 5px;
   }
 
   .status {

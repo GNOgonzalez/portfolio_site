@@ -1,11 +1,15 @@
 ---
+import { demoUrls } from '../data/demo';
+
 const navItems = [
+  { href: '#featured-project-heading', label: 'Booking demo' },
   { href: '#projects', label: 'Projects' },
   { href: '#about', label: 'About' },
   { href: '#contact', label: 'Contact' },
 ];
 
 const isHome = Astro.url.pathname === '/';
+const bookingDemoUrl = demoUrls.booking;
 ---
 
 <header class="site-header">
@@ -16,7 +20,14 @@ const isHome = Astro.url.pathname === '/';
         {
           navItems.map((item) => (
             <li>
-              <a href={isHome ? item.href : `/${item.href}`}>{item.label}</a>
+              {item.label === 'Booking demo' && bookingDemoUrl ? (
+                <a href={bookingDemoUrl} target="_blank" rel="noopener noreferrer">
+                  {item.label}
+                  <span class="sr-only"> (opens in new tab)</span>
+                </a>
+              ) : (
+                <a href={isHome ? item.href : `/${item.href}`}>{item.label}</a>
+              )}
             </li>
           ))
         }

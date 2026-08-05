@@ -2,12 +2,14 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
+import FeaturedProject from '../components/FeaturedProject.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import AboutBlurbs from '../components/AboutBlurbs.astro';
 import Footer from '../components/Footer.astro';
-import { getSortedProjects } from '../data/projects';
+import { getFeaturedProject, getHomepageProjects } from '../data/projects';
 
-const projects = getSortedProjects();
+const featuredProject = getFeaturedProject();
+const projects = getHomepageProjects();
 ---
 
 <Layout>
@@ -15,11 +17,14 @@ const projects = getSortedProjects();
   <main id="main">
     <Hero />
 
+    {featuredProject && <FeaturedProject project={featuredProject} />}
+
     <section class="section projects-section" id="projects" aria-labelledby="projects-heading">
       <div class="container">
         <h2 class="section-heading-lg" id="projects-heading">Project story</h2>
         <p class="projects-lead">
-          Four projects in order — each one led to the next. Click through for the overview.
+          Four projects in order — each one led to the next. Try the featured booking app above,
+          then click through for the full arc.
         </p>
 
         <div class="projects-grid">
@@ -37,8 +42,7 @@ const projects = getSortedProjects();
 
 <style>
   .projects-section {
-    padding-block: var(--space-2xl) var(--space-xl);
-    margin-top: calc(var(--space-lg) * -1);
+    padding-block: var(--space-xl) var(--space-xl);
   }
 
   .projects-lead {

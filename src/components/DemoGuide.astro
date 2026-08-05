@@ -1,6 +1,6 @@
 ---
-import { inquiryMailto, type DemoGuide } from '../data/demo-guides';
-import { profile } from '../data/profile';
+import { type DemoGuide } from '../data/demo-guides';
+import InquiryLink from './InquiryLink.astro';
 
 interface Props {
   guide: DemoGuide;
@@ -8,14 +8,13 @@ interface Props {
 }
 
 const { guide, demoUrl } = Astro.props;
-const inquiryHref = guide.inquiry ? inquiryMailto(guide.inquiry, profile.email) : undefined;
 ---
 
 <section class="demo-guide" aria-labelledby="demo-guide-heading">
   <h2 id="demo-guide-heading">Try the live demo</h2>
 
   {
-    guide.inquiry && inquiryHref && (
+    guide.inquiry && (
       <aside class="demo-inquiry card" aria-labelledby="demo-inquiry-heading">
         <h3 id="demo-inquiry-heading">{guide.inquiry.title}</h3>
         <p>{guide.inquiry.description}</p>
@@ -24,9 +23,7 @@ const inquiryHref = guide.inquiry ? inquiryMailto(guide.inquiry, profile.email) 
             <li>{item}</li>
           ))}
         </ul>
-        <a class="btn btn-primary" href={inquiryHref}>
-          Email me about this app
-        </a>
+        <InquiryLink label="Send an inquiry" variant="primary" showDetails />
       </aside>
     )
   }

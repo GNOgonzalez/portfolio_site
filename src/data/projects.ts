@@ -27,6 +27,8 @@ export type Project = {
   githubUrl?: string;
   githubNote?: string;
   trySteps?: string[];
+  /** Highlight on the homepage (spotlight + sorted first in the grid) */
+  featured?: boolean;
 };
 
 export const projects: Project[] = [
@@ -100,6 +102,7 @@ export const projects: Project[] = [
     demoUrl: demoUrls.booking,
     demoNote: 'First load may take ~50s on free-tier hosting while the API wakes up.',
     githubUrl: 'https://github.com/GNOgonzalez/booking_system',
+    featured: true,
   },
   {
     slug: 'pomodoro-game',
@@ -129,6 +132,18 @@ export function getProject(slug: string): Project | undefined {
 
 export function getSortedProjects(): Project[] {
   return [...projects].sort((a, b) => a.order - b.order);
+}
+
+export function getFeaturedProject(): Project | undefined {
+  return projects.find((p) => p.featured);
+}
+
+/** Homepage grid: featured project first, then the rest in story order */
+export function getHomepageProjects(): Project[] {
+  const sorted = getSortedProjects();
+  const featured = getFeaturedProject();
+  if (!featured) return sorted;
+  return [featured, ...sorted.filter((p) => p.slug !== featured.slug)];
 }
 
 export function getAdjacentProjects(slug: string): {

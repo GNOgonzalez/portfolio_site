@@ -1,0 +1,235 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import DemoButton from '../../components/DemoButton.astro';
+import { bookingInquiry, inquiryFormNotice, inquiryUrls } from '../../data/inquiry';
+import { demoUrls } from '../../data/demo';
+import { profile } from '../../data/profile';
+
+const formUrl = inquiryUrls.booking;
+const pageTitle = `${bookingInquiry.title} — Gino M. Gonzalez`;
+---
+
+<Layout title={pageTitle} description={bookingInquiry.description}>
+  <Header />
+  <main id="main" class="inquire-page section container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true"> / </span>
+      <a href="/projects/booking-scheduling">Booking app</a>
+      <span aria-hidden="true"> / </span>
+      <span aria-current="page">Inquire</span>
+    </nav>
+
+    <header class="inquire-header">
+      <p class="eyebrow">Booking & Scheduling App</p>
+      <h1>{bookingInquiry.title}</h1>
+      <p class="lead">{bookingInquiry.description}</p>
+      <div class="header-actions">
+        {
+          formUrl ? (
+            <a
+              class="btn btn-primary"
+              href={formUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Open inquiry form
+              <span class="sr-only"> (opens Google Form in new tab)</span>
+            </a>
+          ) : (
+            <a class="btn btn-primary" href={`mailto:${profile.email}`}>
+              Email me instead
+            </a>
+          )
+        }
+        {demoUrls.booking && <DemoButton href={demoUrls.booking} label="Try the live demo" />}
+        <a class="btn btn-secondary" href={bookingInquiry.backLink.href}>
+          {bookingInquiry.backLink.label}
+        </a>
+      </div>
+      {
+        formUrl && (
+          <div class="form-details">
+            <p class="form-notice" role="note">
+              <strong>Note:</strong> {inquiryFormNotice}
+            </p>
+            <p class="form-link">
+              Direct link:
+              <a href={formUrl} target="_blank" rel="noopener noreferrer">
+                {formUrl}
+                <span class="sr-only"> (opens Google Form in new tab)</span>
+              </a>
+            </p>
+          </div>
+        )
+      }
+    </header>
+
+    {
+      !formUrl && import.meta.env.DEV && (
+        <section class="setup-section card" aria-labelledby="setup-heading">
+          <h2 id="setup-heading">Dev setup</h2>
+          <p>
+            Add <code>PUBLIC_BOOKING_INQUIRY_FORM_URL</code> to <code>.env</code> with your Google
+            Form link.
+          </p>
+          <p>Suggested form fields:</p>
+          <ul>
+            {bookingInquiry.suggestedFields.map((field) => (
+              <li>{field}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      formUrl && (
+        <section class="info-section" aria-labelledby="privacy-heading">
+          <h2 id="privacy-heading">What to expect</h2>
+          <ul>
+            <li>The form is hosted by Google — your answers go to me, not this website.</li>
+            <li>Google may show a sign-in prompt; you can usually submit as a guest.</li>
+            <li>I only use your details to respond to your inquiry.</li>
+          </ul>
+        </section>
+      )
+    }
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .inquire-page {
+    padding-block: var(--space-xl) var(--space-3xl);
+  }
+
+  .breadcrumb {
+    margin-bottom: var(--space-lg);
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+  }
+
+  .breadcrumb a {
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .inquire-header {
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--color-border);
+    max-width: var(--reading-width);
+  }
+
+  .eyebrow {
+    margin: 0 0 var(--space-xs);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primary-bright);
+  }
+
+  h1 {
+    margin: 0 0 var(--space-sm);
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .lead {
+    margin: 0 0 var(--space-lg);
+    line-height: 1.65;
+    color: var(--color-text-muted);
+  }
+
+  .header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .form-details {
+    margin-top: var(--space-md);
+    max-width: 36rem;
+  }
+
+  .form-notice {
+    margin: 0 0 var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+    background: color-mix(in srgb, var(--color-primary-light) 15%, white);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 25%, white);
+    border-radius: var(--radius);
+  }
+
+  .form-notice strong {
+    color: var(--color-text);
+  }
+
+  .form-link {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+    word-break: break-all;
+  }
+
+  .form-link a {
+    margin-left: 0.25rem;
+  }
+
+  .setup-note {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+  }
+
+  .setup-section,
+  .info-section {
+    max-width: var(--reading-width);
+  }
+
+  .setup-section {
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+  }
+
+  h2 {
+    margin: 0 0 var(--space-sm);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+  }
+
+  .setup-section p,
+  .info-section ul {
+    margin: 0 0 var(--space-sm);
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .setup-section ul,
+  .info-section ul {
+    padding-left: 1.25rem;
+  }
+
+  code {
+    font-size: 0.9em;
+    padding: 0.1em 0.35em;
+    background: color-mix(in srgb, var(--color-primary-light) 25%, white);
+    border-radius: 0.25rem;
+  }
+</style>

@@ -56,22 +56,6 @@ export type DemoGuide = {
   inquiry?: DemoGuideInquiry;
 };
 
-export function inquiryMailto(inquiry: DemoGuideInquiry, email: string): string {
-  const body = [
-    "Hi Gino,",
-    '',
-    "I'm interested in using the booking & scheduling app for our organization.",
-    '',
-    'Organization / school name:',
-    'What we need:',
-    'Timeline:',
-    '',
-    'Thanks,',
-  ].join('\n');
-
-  return `mailto:${email}?subject=${encodeURIComponent(inquiry.emailSubject)}&body=${encodeURIComponent(body)}`;
-}
-
 export const demoGuides: Record<string, DemoGuide> = {
   'booking-scheduling': {
     password: 'demo1234',

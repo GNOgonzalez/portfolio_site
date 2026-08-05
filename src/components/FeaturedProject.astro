@@ -1,0 +1,120 @@
+---
+import type { Project } from '../data/projects';
+import DemoButton from './DemoButton.astro';
+import InquiryLink from './InquiryLink.astro';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+---
+
+<section class="featured-project section" aria-labelledby="featured-project-heading">
+  <div class="container">
+    <div class="featured-card card">
+      <div class="featured-inner">
+        <div class="featured-copy">
+          <p class="eyebrow">Featured project</p>
+          <h2 id="featured-project-heading">{project.title}</h2>
+          <p class="subtitle">{project.subtitle}</p>
+          <p class="teaser">{project.whereNow}</p>
+          <ul class="tag-list stack" aria-label="Tech stack">
+            {project.stack.slice(0, 5).map((tech) => (
+              <li><span class="tag">{tech}</span></li>
+            ))}
+            {project.stack.length > 5 && (
+              <li><span class="tag">+{project.stack.length - 5}</span></li>
+            )}
+          </ul>
+        </div>
+        <div class="featured-actions">
+          {project.demoUrl && (
+            <DemoButton href={project.demoUrl} label="Try the live demo" />
+          )}
+          <a class="btn btn-secondary" href={`/projects/${project.slug}`}>
+            Read overview
+          </a>
+          <InquiryLink label="Send an inquiry" variant="secondary" />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .featured-project {
+    padding-block: 0 var(--space-lg);
+    margin-top: calc(var(--space-lg) * -1);
+  }
+
+  .featured-card {
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 35%, white);
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--color-primary-light) 22%, white) 0%,
+      var(--color-surface) 55%
+    );
+    box-shadow: var(--shadow-lg);
+  }
+
+  .featured-inner {
+    display: grid;
+    gap: var(--space-lg);
+    padding: var(--space-xl);
+  }
+
+  @media (min-width: 768px) {
+    .featured-inner {
+      grid-template-columns: 1fr auto;
+      align-items: end;
+    }
+  }
+
+  .eyebrow {
+    margin: 0 0 var(--space-xs);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primary-bright);
+  }
+
+  h2 {
+    margin: 0 0 var(--space-sm);
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .subtitle {
+    margin: 0 0 var(--space-sm);
+    font-size: 1.0625rem;
+    font-weight: 500;
+    color: var(--color-primary-dark);
+  }
+
+  .teaser {
+    margin: 0 0 var(--space-md);
+    max-width: 40rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+  }
+
+  .stack {
+    margin: 0;
+  }
+
+  .featured-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: center;
+  }
+
+  .featured-actions :global(.btn) {
+    text-decoration: none;
+  }
+</style>

@@ -5,10 +5,10 @@ import DemoButton from '../../components/DemoButton.astro';
 import ProjectOverview from '../../components/ProjectOverview.astro';
 import ProjectNav from '../../components/ProjectNav.astro';
 import DemoGuide from '../../components/DemoGuide.astro';
+import InquiryLink from '../../components/InquiryLink.astro';
 import Footer from '../../components/Footer.astro';
 import { getProject, getSortedProjects, getAdjacentProjects } from '../../data/projects';
-import { getDemoGuide, inquiryMailto } from '../../data/demo-guides';
-import { profile } from '../../data/profile';
+import { getDemoGuide } from '../../data/demo-guides';
 
 export function getStaticPaths() {
   return getSortedProjects().map((project) => ({
@@ -25,7 +25,6 @@ if (!project) {
 
 const { prev, next } = getAdjacentProjects(slug!);
 const demoGuide = getDemoGuide(slug!);
-const inquiryHref = demoGuide?.inquiry ? inquiryMailto(demoGuide.inquiry, profile.email) : undefined;
 const orderLabel = String(project.order).padStart(2, '0');
 
 const statusLabels: Record<typeof project.status, string> = {
@@ -68,10 +67,8 @@ const pageTitle = `${project.title} — Gino M. Gonzalez`;
             <span class="demo-pending text-muted">{project.demoNote}</span>
           ) : null}
           {
-            inquiryHref && (
-              <a class="btn btn-secondary" href={inquiryHref}>
-                Inquire about using this
-              </a>
+            demoGuide?.inquiry && (
+              <InquiryLink label="Send an inquiry" variant="secondary" />
             )
           }
           {

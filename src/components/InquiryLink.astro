@@ -1,0 +1,84 @@
+---
+import { inquiryFormNotice, inquiryUrls } from '../data/inquiry';
+
+interface Props {
+  label: string;
+  variant?: 'primary' | 'secondary';
+  /** Show Google Form warning and direct link below the button */
+  showDetails?: boolean;
+}
+
+const { label, variant = 'primary', showDetails = false } = Astro.props;
+const formUrl = inquiryUrls.booking;
+const href = formUrl || '/inquire/booking';
+const isExternal = Boolean(formUrl);
+---
+
+<div class:list={['inquiry-link', showDetails && 'inquiry-link--detailed']}>
+  <a
+    class:list={['btn', variant === 'primary' ? 'btn-primary' : 'btn-secondary']}
+    href={href}
+    target={isExternal ? '_blank' : undefined}
+    rel={isExternal ? 'noopener noreferrer' : undefined}
+  >
+    {label}
+    {isExternal && !showDetails && <span class="sr-only"> (opens Google Form in new tab)</span>}
+  </a>
+
+  {
+    isExternal && showDetails && (
+      <div class="inquiry-link-details">
+        <p class="inquiry-form-notice" role="note">
+          <strong>Note:</strong> {inquiryFormNotice}
+        </p>
+        <p class="inquiry-form-link">
+          Direct link:
+          <a href={formUrl} target="_blank" rel="noopener noreferrer">
+            {formUrl}
+            <span class="sr-only"> (opens Google Form in new tab)</span>
+          </a>
+        </p>
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .inquiry-link--detailed {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .inquiry-link-details {
+    max-width: 36rem;
+  }
+
+  .inquiry-form-notice {
+    margin: 0;
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+    background: color-mix(in srgb, var(--color-primary-light) 15%, white);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 25%, white);
+    border-radius: var(--radius);
+  }
+
+  .inquiry-form-notice strong {
+    color: var(--color-text);
+  }
+
+  .inquiry-form-link {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+    word-break: break-all;
+  }
+
+  .inquiry-form-link a {
+    margin-left: 0.25rem;
+  }
+</style>

@@ -1,11 +1,13 @@
 ---
 import { profile } from '../data/profile';
+import { demoUrls } from '../data/demo';
 
 interface Props {
   compact?: boolean;
 }
 
 const { compact = false } = Astro.props;
+const bookingDemoUrl = demoUrls.booking;
 ---
 
 <section class:list={['hero', { compact }]} id="top" aria-labelledby="hero-heading">
@@ -19,10 +21,27 @@ const { compact = false } = Astro.props;
       </>
     )}
     {!compact && (
-      <a class="btn btn-hero" href="#projects">
-        Jump to projects
-        <span aria-hidden="true">↓</span>
-      </a>
+      <div class="hero-actions">
+        {bookingDemoUrl && (
+          <a
+            class="btn btn-hero btn-hero-primary"
+            href={bookingDemoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Try booking demo
+            <span class="sr-only"> (opens in new tab)</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+        )}
+        <a class="btn btn-hero" href="#featured-project-heading">
+          See featured project
+          <span aria-hidden="true">↓</span>
+        </a>
+        <a class="btn btn-hero btn-hero-ghost" href="#projects">
+          Full project story
+        </a>
+      </div>
     )}
   </div>
 </section>
@@ -80,6 +99,12 @@ const { compact = false } = Astro.props;
     color: color-mix(in srgb, var(--color-hero-text) 85%, white);
   }
 
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
   .btn-hero {
     display: inline-flex;
     align-items: center;
@@ -92,6 +117,29 @@ const { compact = false } = Astro.props;
     background: var(--color-hero-text);
     border-radius: var(--radius);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .btn-hero-primary {
+    color: var(--color-hero-text);
+    background: var(--color-primary-dark);
+    box-shadow: var(--shadow);
+  }
+
+  .btn-hero-primary:hover {
+    color: var(--color-hero-text);
+    background: color-mix(in srgb, var(--color-primary-dark) 88%, black);
+  }
+
+  .btn-hero-ghost {
+    color: var(--color-hero-text);
+    background: transparent;
+    border: 1px solid color-mix(in srgb, var(--color-hero-text) 45%, transparent);
+  }
+
+  .btn-hero-ghost:hover {
+    color: var(--color-hero-text);
+    background: color-mix(in srgb, var(--color-hero-text) 12%, transparent);
+    box-shadow: none;
   }
 
   .btn-hero:hover {
